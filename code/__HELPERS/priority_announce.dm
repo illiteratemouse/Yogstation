@@ -1,4 +1,4 @@
-/proc/priority_announce(text, title = "", sound = 'sound/ai/attention.ogg', type , sender_override)
+/proc/priority_announce(text, title = "", sound = 'sound/ai/attention.ogg', type , sender_override, encode = TRUE)
 	if(!text)
 		return
 
@@ -7,7 +7,7 @@
 	if(type == "Priority")
 		announcement += "<h1 class='alert'>Priority Announcement</h1>"
 		if (title && length(title) > 0)
-			announcement += "<br><h2 class='alert'>[html_encode(title)]</h2>"
+			announcement += "<br><h2 class='alert'>[encode ? html_encode(title) : title]</h2>"
 	else if(type == "Captain")
 		announcement += "<h1 class='alert'>Captain Announces</h1>"
 		GLOB.news_network.SubmitArticle(text, "Captain's Announcement", "Station Announcements", null)
@@ -18,7 +18,7 @@
 		else
 			announcement += "<h1 class='alert'>[sender_override]</h1>"
 		if (title && length(title) > 0)
-			announcement += "<br><h2 class='alert'>[html_encode(title)]</h2>"
+			announcement += "<br><h2 class='alert'>[encode ? html_encode(title) : title]</h2>"
 
 		if(!sender_override)
 			if(title == "")
@@ -26,7 +26,7 @@
 			else
 				GLOB.news_network.SubmitArticle(title + "<br><br>" + text, "Central Command", "Station Announcements", null)
 
-	announcement += "<br><span class='alert'>[html_encode(text)]</span><br>"
+	announcement += "<br><span class='alert'>[encode ? html_encode(text) : text]</span><br>"
 	announcement += "<br>"
 
 	var/s = sound(sound)
@@ -54,7 +54,7 @@
 
 	SScommunications.send_message(M)
 
-/proc/minor_announce(message, title = "Attention:", alert)
+/proc/minor_announce(message, title = "Attention:", alert, encode = TRUE)
 	if(!message)
 		return
 
@@ -63,9 +63,9 @@
 			if(isliving(M) && M.stat != DEAD)
 				var/mob/living/L = M
 				if(!L.IsUnconscious())
-					to_chat(L, "<span class='big bold'><font color = red>[html_encode(title)]</font color><BR>[html_encode(message)]</span><BR>")
+					to_chat(L, "<span class='big bold'><font color = red>[encode ? html_encode(title) : title]</font color><BR>[encode ? html_encode(message) : message]</span><BR>")
 			else
-				to_chat(M, "<span class='big bold'><font color = red>[html_encode(title)]</font color><BR>[html_encode(message)]</span><BR>")
+				to_chat(M, "<span class='big bold'><font color = red>[encode ? html_encode(title) : title]</font color><BR>[encode ? html_encode(message) : message]</span><BR>")
 			if(M.client.prefs.toggles & SOUND_ANNOUNCEMENTS)
 				if(alert)
 					SEND_SOUND(M, sound('sound/misc/notice1.ogg'))
